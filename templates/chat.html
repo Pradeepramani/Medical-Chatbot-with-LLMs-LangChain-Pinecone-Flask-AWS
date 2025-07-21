@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🩺 Medical Chatbot</h2>
+    <div class="chat-box p-3 mb-3" id="chat-box">
+        <!-- Messages will appear here -->
+    </div>
+
+    <form id="chat-form" class="form-inline">
+        <input type="text" id="user-input" class="form-control mr-2 flex-grow-1" placeholder="Ask your question..." required>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("user-input");
+    const chatBox = document.getElementById("chat-box");
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const userMessage = input.value;
+        appendMessage("user", userMessage);
+        input.value = "";
+
+        try {
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: userMessage })
+            });
+
+            const data = await response.json();
+            appendMessage("bot", data.answer);
+        } catch (error) {
+            appendMessage("bot", "⚠️ Sorry, something went wrong. Please try again.");
+            console.error("Chat error:", error);
+        }
+    };
+
+    function appendMessage(sender, text) {
+        const messageRow = document.createElement("div");
+        messageRow.classList.add("d-flex", "mb-3", sender === "user" ? "justify-content-end" : "justify-content-start");
+
+        const avatar = document.createElement("img");
+        avatar.src = sender === "user"
+            ? "https://cdn-icons-png.flaticon.com/512/219/219983.png"
+            : "https://cdn-icons-png.flaticon.com/512/4712/4712103.png";
+        avatar.classList.add("rounded-circle", "avatar");
+
+        const message = document.createElement("div");
+        message.classList.add("message", sender);
+        message.textContent = text;
+
+        if (sender === "user") {
+            messageRow.appendChild(message);
+            messageRow.appendChild(avatar);
+        } else {
+            messageRow.appendChild(avatar);
+            messageRow.appendChild(message);
+        }
+
+        chatBox.appendChild(messageRow);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
