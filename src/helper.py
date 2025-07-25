@@ -32,3 +32,9 @@ def text_Split(minimal_docs):
 
 def download_hugging_face_embeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"):
     return HuggingFaceEmbeddings(model_name=model_name)
+
+from langchain_pinecone import PineconeVectorStore
+
+def load_retriever(index_name, embedding_model):
+    vectorstore = PineconeVectorStore(index_name=index_name, embedding=embedding_model)
+    return vectorstore.as_retriever()
