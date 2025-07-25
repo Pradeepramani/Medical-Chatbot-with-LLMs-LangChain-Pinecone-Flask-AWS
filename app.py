@@ -72,7 +72,7 @@ def index():
 @app.route("/ask", methods=["POST"])
 def ask():
     try:
-        user_input = request.json.get("question")
+        user_input = request.json.get("question1")
         print("User asked:", user_input)  # Debug log
 
         response = rag_chain.invoke({"input": user_input})
