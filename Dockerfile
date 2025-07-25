@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install -r requirement.txt
 
-Env pythonpath = /app
+# Env pythonpath = /app
 
 CMD ["python3", "app.py"]
